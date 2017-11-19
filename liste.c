@@ -78,18 +78,18 @@ node_t * list_remove(node_t * head, void*data)
                 return head;
 
             }
-            if(tmp->next == NULL) //queue
-            {
-                prec->next = NULL;
-                free(tmp);
-                return head;
-            }
             prec->next = tmp->next; //elem au milieu
             free(tmp);
             return head;
         }
         prec = tmp;
         tmp = tmp->next;
+    }
+    if(tmp->next == NULL && tmp->data == data) //queue
+    {
+        prec->next = NULL;
+        free(tmp);
+        return head;
     }
     return head;
 }
@@ -100,7 +100,8 @@ node_t * list_headRemove(node_t * head)
     if(head->next == NULL)
     {
         free(head);
-        return NULL;
+        node_t *new = list_create();
+        return new;
     }
     node_t *tmp = head;
     head=head->next;
@@ -108,11 +109,24 @@ node_t * list_headRemove(node_t * head)
     return head;
 }
 
-void list_destroy(node_t *head)
+void *list_destroy(node_t *head)
 {
     if(head == NULL)
-        return;
-    list_destroy(list_headRemove(head));
+        return NULL;
+    if(head->next == NULL)
+    {
+        free(head);
+        return NULL;
+    }
+
+    node_t *n = head;
+    while(head->next != NULL)
+    {
+        free(n);
+        head = head->next;
+        n = head;
+    }
+    return NULL;
 }
 
 

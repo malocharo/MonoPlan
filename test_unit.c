@@ -71,8 +71,8 @@ int test_liste()
 
     node_t * node6 = list_create();
     node_t * test_Headremove = list_headRemove(node6);
-    if(test_Headremove != NULL)
-        printf("erreur sur list_headRemove sur liste vide %p doit valoir nil",test_Headremove);
+
+
     node6 = list_create();
     node6 = list_append(node6,&n);
     node_t* node7 = list_append(node6,&n);
@@ -83,7 +83,6 @@ int test_liste()
     if(*(int*)list_get_data(test_Headremove) != 5)
          printf("Erreur list remove sur tete %d devrait etre 5",*(int*)list_get_data(test_Headremove));
 
-    list_destroy(node);
 
 
     return 0;
