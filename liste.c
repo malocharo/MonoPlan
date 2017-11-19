@@ -13,15 +13,15 @@ node_t * list_create()
     return node;
 }
 
-inline void * list_get_data(const node_t * node)
+ void * list_get_data(const node_t * node)
 {
-    if(node == NULL) return NULL;
+    if(node == NULL ) return NULL;
     return node->data;
 }
 
-inline void list_set_data(node_t* node, void * data)
+ void list_set_data(node_t* node, void * data)
 {
-    if(node == NULL)return;
+    if(node == NULL || data == NULL)return;
     node->data = data;
 }
 
@@ -36,6 +36,11 @@ node_t * list_insert(node_t * head,void * data)
 }
 node_t * list_append(node_t *head,void *data)
 {
+    if(head->next == NULL && head->data == NULL)
+    {
+        head->data = data;
+        return head;
+    }
     node_t *tmp = NULL;
     node_t *new = list_create();
     new->data = data;
@@ -47,37 +52,56 @@ node_t * list_append(node_t *head,void *data)
     for(tmp = head;tmp->next!=NULL;tmp = tmp->next);
     tmp->next = new;
     return head;
+
+
 }
 
 node_t * list_remove(node_t * head, void*data)
 {
-    node_t *tmp;
+    node_t *tmp = head;
     node_t *prec = NULL;
-    for(tmp = head;tmp->next!=NULL;tmp=tmp->next)
+    if(head == NULL) return NULL;
+    if(head->data == data && head->next == NULL)
+    {
+        free(head);
+        return NULL;
+    }
+
+    while(head->next != NULL)
     {
         if(tmp->data == data)
         {
-            if(prec == NULL)
-                return head = head->next;
-            else
+            if(prec == NULL) //tete
             {
-                prec->next = tmp->next;
+                 head = tmp->next;
+                 free(tmp);
+                return head;
+
+            }
+            if(tmp->next == NULL) //queue
+            {
+                prec->next = NULL;
+                free(tmp);
                 return head;
             }
-
+            prec->next = tmp->next; //elem au milieu
+            free(tmp);
+            return head;
         }
         prec = tmp;
+        tmp = tmp->next;
     }
-    if(tmp->data == data)
-        prec->next = NULL;
     return head;
-
-
 }
 
 node_t * list_headRemove(node_t * head)
 {
     if(head == NULL) return NULL;
+    if(head->next == NULL)
+    {
+        free(head);
+        return NULL;
+    }
     node_t *tmp = head;
     head=head->next;
     free(tmp);
@@ -87,10 +111,7 @@ node_t * list_headRemove(node_t * head)
 void list_destroy(node_t *head)
 {
     if(head == NULL)
-    {
-        free(head);
         return;
-    }
     list_destroy(list_headRemove(head));
 }
 

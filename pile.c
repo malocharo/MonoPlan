@@ -12,7 +12,11 @@ pile_t * pile_creer(int nb_places)
     pile_t *pile = malloc(sizeof(pile_t));
     if(pile == NULL) return NULL;
     pile->elem_pile = malloc(sizeof(double)*nb_places);
-    if(pile->elem_pile == NULL)return NULL;
+    if(pile->elem_pile == NULL)
+    {
+        free(pile);
+        return NULL;
+    }
     pile->nbelem_pile = 0;
     pile->size_pile = nb_places;
     return pile;
@@ -39,7 +43,7 @@ int pile_places_libres(const pile_t *p)
     return p->size_pile - p->nbelem_pile;
 }
 
-inline int pile_depiler(pile_t *p, double *elem)
+ int pile_depiler(pile_t *p, double *elem)
 {
     if(p->nbelem_pile == 0) return -1;
     p->nbelem_pile--;
@@ -48,7 +52,7 @@ inline int pile_depiler(pile_t *p, double *elem)
     return 0;
 }
 
-inline int pile_empiler(pile_t *p, double el)
+ int pile_empiler(pile_t *p, double el)
 {
     if(p->nbelem_pile == p->size_pile) return -1;
     p->elem_pile[p->nbelem_pile++] = el;

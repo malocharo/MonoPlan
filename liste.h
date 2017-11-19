@@ -13,8 +13,8 @@ typedef struct node
 }node_t;
 
 node_t * list_create();
-inline void * list_get_data(const node_t*);
-inline void list_set_data(node_t*, void*);
+ void * list_get_data(const node_t*);
+ void list_set_data(node_t*, void*);
 node_t * list_insert(node_t *head,void * data);
 node_t * list_append(node_t *head,void * data);
 node_t * list_remove(node_t *head,void * data);

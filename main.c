@@ -1,6 +1,7 @@
 #include <stdio.h>
-
+#include "test_unit.h">
 int main() {
-    printf("Hello, World!\n");
+    test_liste();
+    test_pile();
     return 0;
 }
