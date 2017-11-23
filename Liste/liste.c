@@ -6,44 +6,56 @@
 
 node_t * list_create()
 {
-    node_t * node = malloc(sizeof(node_t));
+   /* node_t * node = malloc(sizeof(node_t));
     if(node == NULL) return NULL;
     node->data = NULL;
     node->next = NULL;
-    return node;
+    return node;*/
+
+    return NULL;
 }
 
  void * list_get_data(const node_t * node)
 {
-    if(node == NULL ) return NULL;
     return node->data;
 }
 
  void list_set_data(node_t* node, void * data)
 {
-    if(node == NULL || data == NULL)return;
     node->data = data;
 }
 
 node_t * list_insert(node_t * head,void * data)
 {
-    if(head == NULL || data == NULL) return NULL;
     node_t * new = malloc(sizeof(node_t));
     if(new == NULL) return NULL;
     new->data = data;
     new->next = head;
     return new;
 }
+
 node_t * list_append(node_t *head,void *data)
 {
-    if(head->next == NULL && head->data == NULL)
+    if(head == NULL){
+        //head = list_create();
+        node_t * node = malloc(sizeof(node_t));
+        if(node == NULL) return NULL;
+        node->data = data;
+        node->next = NULL;
+        return node;
+    }
+
+    /*if(head->next == NULL && head->data == NULL)
     {
         head->data = data;
         return head;
-    }
+    }*/
     node_t *tmp = NULL;
-    node_t *new = list_create();
+    node_t *new = malloc(sizeof(node_t));
+    if(new == NULL) return NULL;
+    new->next = NULL;
     new->data = data;
+
     if(head->next == NULL)
     {
         head->next = new;
@@ -63,6 +75,7 @@ node_t * list_remove(node_t * head, void*data)
     if(head == NULL) return NULL;
     if(head->data == data && head->next == NULL)
     {
+        head->data = NULL;
         free(head);
         return NULL;
     }
@@ -100,8 +113,9 @@ node_t * list_headRemove(node_t * head)
     if(head->next == NULL)
     {
         free(head);
-        node_t *new = list_create();
-        return new;
+        /*node_t *new = list_create();
+        return new;*/
+        return  NULL;
     }
     node_t *tmp = head;
     head=head->next;
