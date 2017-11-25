@@ -25,7 +25,7 @@ void init()
     op[4].operator = &mod;
 }
 
-void evaluate(s_cell * cell)
+void evaluate(feuille_t* feuille,s_cell * cell)
 {
     char *str;
     char *ex;
@@ -46,16 +46,41 @@ void evaluate(s_cell * cell)
             list = list_insert(list,tmp);
             pile_empiler(pile_elem,strtod(ex,NULL));
         }
-        else if(sscanf(ex,"%p",ref))
-        {
-            s_token *tmp = malloc(sizeof(s_token));
-            tmp->type = s_token.VALUE;
-            tmp->ref = ref;
-            list = list_insert(list,tmp);
-            //pile_empiler(pile_elem,)
+        else{
+            s_cell* dep = getCellRef(feuille->cell,ex);
+            if(dep) // on a trouve une reference vers une cellule
+            {
+                cell->ref = list_insert(cell->ref,dep);
+                pile_empiler(pile_elem,dep->val);
+            }
+            else{ // c 'est une operation
+                for(int i = 0;i<5;i++)
+                    if(op[i].op_name == ex)
+                    {
+                        s_token *tmp = malloc(sizeof(s_token));
+                        tmp->type = s_token.OPERATOR;
+                        tmp->operator = op[i].operator;
+                        list = list_insert(list,tmp);
+                        op[i].operator(list); // operation
+                    }
+            }
+
+
         }
-        ex = strtok(str," ");
+        ex = strtok(NULL," "); // c est le 'man strtok' qui dit de mettre a NULL
 
     }
+    pile_depiler(pile_elem,cell->val); // si value il y a sinon vaudra 0.0
+    cell->token = list; //on donne l'adresse de la liste des tokens de cette cellule spécifique
 }
 
+void * getCellRef(node_t * n, char* ref)
+{
+    while(n)
+    {
+        if(((s_cell*)n->data)->contenu == ref)
+            return n->data;
+        n = n->next;
+    }
+    return NULL;
+}

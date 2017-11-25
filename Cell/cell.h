@@ -38,6 +38,7 @@ typedef struct operator
 
 extern operator_t op[5]; // +,-,*,/,%
 void init();
-void evaluate(s_cell *);
+void evaluate(feuille_t*,s_cell *);
+void * getCellRef(node_t*,char*);
 
 #endif //MONOPLAN_CELL_H
