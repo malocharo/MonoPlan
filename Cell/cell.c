@@ -70,7 +70,7 @@ void evaluate(feuille_t* feuille,s_cell * cell)
         ex = strtok(NULL," "); // c est le 'man strtok' qui dit de mettre a NULL
 
     }
-    pile_depiler(pile_elem,cell->val); // si value il y a sinon vaudra 0.0
+    pile_depiler(pile_elem,&cell->val); // si value il y a sinon vaudra 0.0
     cell->token = list; //on donne l'adresse de la liste des tokens de cette cellule spécifique
 }
 

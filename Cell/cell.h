@@ -5,7 +5,7 @@
 #ifndef MONOPLAN_CELL_H
 #define MONOPLAN_CELL_H
 
-#include "feuille.h"
+
 #include "../Liste/liste.h"
 #include "../Pile/pile.h"
 #include <string.h>
@@ -35,6 +35,13 @@ typedef struct operator
     char *op_name;
     void(*operator)(pile_t * eval);
 }operator_t;
+
+typedef struct feuille
+{
+    char * nomFichier;
+    double ligne,colonne;
+    node_t * cell;
+}feuille_t;
 
 extern operator_t op[5]; // +,-,*,/,%
 void init();
