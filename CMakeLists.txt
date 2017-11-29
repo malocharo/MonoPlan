@@ -12,3 +12,4 @@ target_link_libraries(Monoplan m)
 
 add_subdirectory(Pile)
 add_subdirectory(Liste)
+add_subdirectory(Cell)
