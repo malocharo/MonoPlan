@@ -68,7 +68,19 @@ void divi(pile_t* eval)
     pile_depiler(eval,&d1);
     pile_empiler(eval,d/d1);
 }
+/*void viewPile(pile_t *p)
+{
+    pile_t *tmp = p;
+    double val;
+    int i = 0;
+    pile_initialiser_iterateur(tmp);
+    while(pile_obtenir_element_suivant(tmp,&val) == 0)
+    {
+        printf("%d val %lf\n",i,val);
+        i++;
+    }
 
+}*/
 void evaluate(s_cell *cell)
 {
    if(cell->token == NULL)
@@ -82,30 +94,23 @@ void evaluate(s_cell *cell)
     node_t * tmp = cell->token;
     pile_t * pile_elem = pile_creer(cell->nb_tk);
     s_token * tok;
-    while(tmp->next != NULL)
+    while(tmp !=NULL)
     {
         tok = list_get_data(tmp);
-        if(tok->type == VALUE) pile_empiler(pile_elem,tok->value.cst);
+        if(tok->type == VALUE)
+            pile_empiler(pile_elem,tok->value.cst);
         if(tok->type == REF)
         {
             s_cell * c = tok->value.ref;
             pile_empiler(pile_elem,c->val);
         }
-        if(tok->type == OPERATOR) tok->value.operator(pile_elem);
+        if(tok->type == OPERATOR)
+            tok->value.operator(pile_elem);
 
         tmp = tmp->next;
+        //viewPile(pile_elem);
     }
-
-    tok = list_get_data(tmp);
-    if(tok->type == VALUE) pile_empiler(pile_elem,tok->value.cst);
-    if(tok->type == REF)
-    {
-        s_cell * c = tok->value.ref;
-        pile_empiler(pile_elem,c->val);
-    }
-    if(tok->type == OPERATOR) tok->value.operator(pile_elem);
-
-    pile_depiler(pile_elem,&cell->val);
+    pile_depiler(pile_elem,&(cell->val));
 
 }
 
@@ -124,6 +129,7 @@ void analyze(feuille_t* feuille,s_cell * cell)
     cell->token = list_create();
     str = strdup(cell->contenu);
     ex = strtok(str," ");
+
     if(strcmp(ex,"=") != 0)
     {
        if(sscanf(ex,"%lf",&val) == 1) {
@@ -143,7 +149,7 @@ void analyze(feuille_t* feuille,s_cell * cell)
             if(tmp == NULL) return;
             tmp->type = VALUE;
             tmp->value.cst = strtod(ex,NULL);
-            cell->token = list_insert(cell->token,tmp);
+            cell->token = list_append(cell->token,tmp);
             cell->nb_val++;
             cell->nb_tk++;
 
@@ -156,7 +162,8 @@ void analyze(feuille_t* feuille,s_cell * cell)
                 if(tmp == NULL) return;
                 tmp->type = REF;
                 tmp->value.ref = dep;
-                cell->ref = list_insert(cell->ref,tmp);
+                cell->token = list_append(cell->token,tmp);
+                cell->ref = list_append(cell->ref,dep->ref); //its good i think LUIS ALED
                 cell->nb_tk++;
                 cell->nb_val++;
 
@@ -170,7 +177,7 @@ void analyze(feuille_t* feuille,s_cell * cell)
                         s_token *tmp = malloc(sizeof(s_token));
                         tmp->type = OPERATOR;
                         tmp->value.operator = op[i].operator;
-                        cell->token= list_insert(cell->token,tmp);
+                        cell->token= list_append(cell->token,tmp);
                         cell->nb_tk++;
                         cell->nb_op++;
                         //op[i].operator(pile_elem); // operation

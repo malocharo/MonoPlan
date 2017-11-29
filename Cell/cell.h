@@ -11,8 +11,7 @@
 #include <string.h>
 
 #define NB_OPERATOR 4
-#define NB_COLUMNS  26
-#define NB_LINES 50
+
 
 typedef struct cell
 {

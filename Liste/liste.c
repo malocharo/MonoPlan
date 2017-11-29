@@ -37,7 +37,6 @@ node_t * list_insert(node_t * head,void * data)
 node_t * list_append(node_t *head,void *data)
 {
     if(head == NULL){
-        //head = list_create();
         node_t * node = malloc(sizeof(node_t));
         if(node == NULL) return NULL;
         node->data = data;
@@ -45,25 +44,15 @@ node_t * list_append(node_t *head,void *data)
         return node;
     }
 
-    /*if(head->next == NULL && head->data == NULL)
-    {
-        head->data = data;
-        return head;
-    }*/
-    node_t *tmp = NULL;
-    node_t *new = malloc(sizeof(node_t));
-    if(new == NULL) return NULL;
-    new->next = NULL;
-    new->data = data;
-
-    if(head->next == NULL)
-    {
-        head->next = new;
-        return head;
-    }
-    for(tmp = head;tmp->next!=NULL;tmp = tmp->next);
-    tmp->next = new;
+    node_t *new = head;
+    while(new->next != NULL)
+        new = new->next;
+    node_t *n = malloc(sizeof(node_t));
+    new->next = n;
+    n->next=NULL;
+    n->data = data;
     return head;
+
 
 
 }
