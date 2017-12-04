@@ -127,6 +127,7 @@ void analyze(feuille_t* feuille,s_cell * cell)
 
     pile_t * pile_elem = pile_creer((int)strlen(cell->contenu));
     cell->token = list_create();
+    cell->ref = list_create();
     str = strdup(cell->contenu);
     ex = strtok(str," ");
 
@@ -163,11 +164,10 @@ void analyze(feuille_t* feuille,s_cell * cell)
                 tmp->type = REF;
                 tmp->value.ref = dep;
                 cell->token = list_append(cell->token,tmp);
-                cell->ref = list_append(cell->ref,dep->ref); //its good i think LUIS ALED
+                cell->ref = list_append(cell->ref,dep->ref);
                 cell->nb_tk++;
                 cell->nb_val++;
 
-                //pile_empiler(pile_elem,dep->val);
 
             }
             else{ // c 'est une operation
@@ -180,7 +180,7 @@ void analyze(feuille_t* feuille,s_cell * cell)
                         cell->token= list_append(cell->token,tmp);
                         cell->nb_tk++;
                         cell->nb_op++;
-                        //op[i].operator(pile_elem); // operation
+
                     }
             }
 
