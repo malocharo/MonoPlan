@@ -120,6 +120,8 @@ void analyze(feuille_t* feuille,s_cell * cell)
     char *str;
     char *ex;
     double val;
+    int d;
+    char c;
     cell->nb_tk =0;
     cell->nb_op = 0;
     cell->nb_val= 0;
@@ -156,19 +158,19 @@ void analyze(feuille_t* feuille,s_cell * cell)
 
         }
         else{
-            s_cell* dep = getCellRef(feuille->cell,ex);
-            if(dep) // on a trouve une reference vers une cellule
-            {
-                s_token *tmp = malloc(sizeof(s_token));
-                if(tmp == NULL) return;
-                tmp->type = REF;
-                tmp->value.ref = dep;
-                cell->token = list_append(cell->token,tmp);
-                cell->ref = list_append(cell->ref,dep->ref);
-                cell->nb_tk++;
-                cell->nb_val++;
-
-
+            if(sscanf(ex,"%c%d",&c,&d) == 2) {
+                s_cell *dep = getCellRef(feuille->cell, ex);
+                if (dep) // on a trouve une reference vers une cellule
+                {
+                    s_token *tmp = malloc(sizeof(s_token));
+                    if (tmp == NULL) return;
+                    tmp->type = REF;
+                    tmp->value.ref = dep;
+                    cell->token = list_append(cell->token, tmp);
+                    cell->ref = list_append(cell->ref, dep->ref);
+                    cell->nb_tk++;
+                    cell->nb_val++;
+                }
             }
             else{ // c 'est une operation
                 for(int i = 0;i<NB_OPERATOR;i++)
