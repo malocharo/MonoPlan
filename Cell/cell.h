@@ -50,10 +50,12 @@ typedef struct feuille
     node_t * cell;
 }feuille_t;
 
-extern operator_t op[5]; // +,-,*,/,%
+extern operator_t op[NB_OPERATOR]; // +,-,*,/
 void init_op();
 void analyze(feuille_t*,s_cell *);
 void evaluate(s_cell *);
+void topologicalSort(feuille_t*,s_cell*);
+node_t * degreeCalc(s_cell*,node_t*);
 void * getCellRef(node_t*,const char*);
 void add(pile_t*);
 void minus(pile_t*);
