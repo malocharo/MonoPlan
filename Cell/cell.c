@@ -219,6 +219,7 @@ void * getCellRef(node_t * n, const char* ref)
     node_t * tmp = n;
     while(tmp)
     {
+        printf("%s\n",((s_cell*)n->data)->nom);
         if(strcmp(((s_cell*)n->data)->nom ,ref) == 0)
             return tmp->data;
         tmp = tmp->next;
