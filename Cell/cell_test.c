@@ -4,13 +4,13 @@
 #include "cell.h"
 #include <stdio.h>
 
-void printCell(s_cell *c)
+/*void printCell(s_cell *c)
 {
     if(c->val == 0.0)
         printf("Value of %s is %s\n",c->nom,c->contenu);
     else
         printf("Value of %s is %lf\n",c->nom,c->val);
-}
+}*/
 
 void viewListCell(node_t* list) {
     node_t* tmp = list;
@@ -26,68 +26,54 @@ void viewListCell(node_t* list) {
     }
 }
 
+void create_cell(s_cell *c,char *nom,char * saisie)
+{
+    c->nom = malloc(sizeof(char)* strlen(nom)+1);
+    strcpy(c->nom,nom);
+    c->ref = list_create();
+    c->succ = list_create();
+    c->contenu = malloc(sizeof(char)* strlen(saisie)+1);
+    strcpy(c->contenu,saisie);
+
+}
 
 int main()
 {
     init_op();
     feuille_t f1;
-    s_cell a_1;
-    s_cell a_2;
-    s_cell a_3;
-    s_cell a_4;
     feuille_t * f = &f1;
-    s_cell * a1 = &a_1;
-    s_cell * a2 = &a_2;
-    s_cell * a3 = &a_3;
-    s_cell * a4 = &a_4;
+    s_cell *a1 = malloc(sizeof(s_cell));
+    s_cell *a2 = malloc(sizeof(s_cell));
+    s_cell *a4 = malloc(sizeof(s_cell));
+    create_cell(a1,"A1","= A2 2 +");
+    create_cell(a2,"A2", "= 7 B4 +");
+    create_cell(a4,"B4", "= 1 2 +");
 
-    char * saisie1 = "= B4 A2 +";
-    char * saisie2 = "= 7 B4 +";
-    char * saisie3 = "Je suis 1 test";
-    char * saisie4 = "= 1 2 + ";
-    a1->nom = "A1";
-    a2->nom = "A2";
-    a3->nom = "B3";
-    a4->nom = "B4";
-    a1->contenu = saisie1;
-    a2->contenu = saisie2;
-    a3->contenu = saisie3;
-    a4->contenu = saisie4;
     f->cell = list_create();
     f->cell = list_insert(f->cell,a1);
     f->cell = list_insert(f->cell,a2); // parce qu'on evalue pas bien pour l instant, la case sans predecesseur doit etre en tete
-    //f->cell = list_append(f->cell,a3);
     f->cell = list_insert(f->cell,a4);
 
     analyze(f,a4);
-    evaluate(a4);
+    Sort(a4);
     analyze(f,a2);
-    evaluate(a2);
+    Sort(a2);
     analyze(f,a1);
-    viewListCell(a1->token);
+    Sort(a1);
 
-    viewListCell(a2->token);
-    viewListCell(a4->token);
-    evaluate(a1);
+    if(a1->val != 12)
+        printf("erreur A1\n");
+    if(a2->val != 10)
+        printf("erreur A2\n");
+    if(a4->val != 3)
+        printf("erreur A4\n");
 
-//    topologicalSort(f,a1);
+    a1->contenu = "= A2 6 +";
+    analyze(f,a1);
+    Sort(a1);
+    if(a1->val != 16)
+        printf("erreur A1");
 
 
-    printCell(a1);
-    printCell(a2);
-    printCell(a3);
-    printCell(a4);
-
-
-   /* if(a1->val != -14.0)
-        printf("erreur case A1");
-    if(a2->val != 16.0)
-        printf("erreur case A2");
-    if(strcmp(a3->contenu,saisie3) != 0)
-        printf("erreur case B3");
-    if(strcmp(a4->contenu,saisie4)!=0)
-        printf("erreur B4");*/
-    /*printCell(a1);
-    printCell(a2);
-    printCell(a3);*/
+    printf("Fin de test Cell");
 }

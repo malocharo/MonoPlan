@@ -20,7 +20,10 @@ typedef struct cell
     double val;
     node_t * token;
     node_t * ref;
+    node_t * succ;
 
+    int degree;
+    int degreeC;
     int nb_tk;
     int nb_op;
     int nb_val;
@@ -54,7 +57,7 @@ extern operator_t op[NB_OPERATOR]; // +,-,*,/
 void init_op();
 void analyze(feuille_t*,s_cell *);
 void evaluate(s_cell *);
-void topologicalSort(feuille_t*,s_cell*);
+void Sort(s_cell*);
 node_t * degreeCalc(s_cell*,node_t*);
 void * getCellRef(node_t*,const char*);
 void add(pile_t*);

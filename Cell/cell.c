@@ -1,3 +1,4 @@
+
 //
 // Created by polesmal on 23/11/17.
 //
@@ -7,7 +8,7 @@
 
 
 
-operator_t op[NB_OPERATOR];
+        operator_t op[NB_OPERATOR];
 
 void init_op()
 {
@@ -70,8 +71,8 @@ void divi(pile_t* eval) {
 
 void evaluate(s_cell *cell)
 {
-   if(cell->token == NULL)
-       return;
+    if(cell->token == NULL)
+        return;
     if(cell->nb_val-cell->nb_op !=1) //cohérence de la formule
     {
         cell->val = 0.0;
@@ -80,7 +81,7 @@ void evaluate(s_cell *cell)
     double d;
     node_t * tmp = cell->token;
     pile_t * pile_elem = pile_creer(cell->nb_tk);
-    s_token * tok;
+    s_token * tok = NULL;
     while(tmp !=NULL)
     {
         tok = list_get_data(tmp);
@@ -107,11 +108,13 @@ void analyze(feuille_t* feuille,s_cell * cell)
     char *str;
     char *ex;
     double val;
+    double w;
     int d;
     char c;
     cell->nb_tk =0;
     cell->nb_op = 0;
     cell->nb_val= 0;
+    cell->degreeC = 0;
     s_cell * ref = NULL;
     node_t *head = feuille->cell;
     pile_t * pile_elem = pile_creer((int)strlen(cell->contenu));
@@ -122,10 +125,10 @@ void analyze(feuille_t* feuille,s_cell * cell)
 
     if(strcmp(ex,"=") != 0) // C est une string ou une valeur seul
     {
-       if(sscanf(ex,"%lf",&val) == 1) {
-           cell->val = val;
-           return;
-       }
+        if(sscanf(ex,"%lf",&val) == 1) {
+            cell->val = val;
+            return;
+        }
         cell->val = 0.0;
         return;
 
@@ -145,20 +148,47 @@ void analyze(feuille_t* feuille,s_cell * cell)
 
         }
         else{
-            if(sscanf(ex,"%c%d",&c,&d) == 2) {      // trouve ref pattern évite de faire une recherche de ref pour rien
-                s_cell *dep = getCellRef(head, ex);
-                if (dep) // on a trouve une reference vers une cellule
+            if(sscanf(ex,"%c%d",&c,&d) == 2 && sscanf(ex,"%lf",&w) != 1) {      // trouve ref pattern évite de faire une recherche de ref pour rien
+
+                s_token *tmp = malloc(sizeof(s_token));
+                if (tmp == NULL) return;
+                tmp->type = REF;
+                tmp->value.ref = NULL;
+                node_t * n = feuille->cell;
+                s_cell * ce = NULL;
+
+                while(n != NULL)
                 {
-                    s_token *tmp = malloc(sizeof(s_token));
-                    if (tmp == NULL) return;
-                    tmp->type = REF;
-                    tmp->value.ref = dep;
-                    cell->token = list_append(cell->token, tmp);
-                    cell->ref = list_append(cell->ref, dep); // dep->ref
-                   // feuille->cell = list_append(feuille->cell,tmp); // idk
-                    cell->nb_tk++;
-                    cell->nb_val++;
+                    ce = list_get_data(n);
+                    if(strcmp(ce->nom,ex)==0)
+                    {
+                       tmp->value.ref = n->data;
+                        cell->nb_val++;
+                        cell->nb_tk++;
+
+                        ce = n->data;
+                        cell->ref = list_insert(cell->ref,ce);
+                        cell->degreeC++;
+                    }
+                    n = n->next;
                 }
+
+                cell->degree =cell->degreeC;
+                n = cell->ref;
+                node_t * du = NULL;
+
+                while (n!=NULL)
+                {
+                    ce = list_get_data(n);
+                    du = ce->succ;
+                    if(list_exists(du,cell)==0)
+                        ce->succ = list_insert(du,cell);
+                    n = n->next;
+
+                }
+
+                cell->token = list_append(cell->token,tmp);
+
             }
             else{ // c 'est une operation
                 for(int i = 0;i<NB_OPERATOR;i++)
@@ -180,49 +210,78 @@ void analyze(feuille_t* feuille,s_cell * cell)
         ex = strtok(NULL," ");
 
     }
-
-
-}
-
-
-
-node_t * degreeCalc(s_cell * init,node_t* list)
-{
-    if(init->ref== NULL)
-        return list;
-    if(init->ref->next == NULL)
-        return list = list_insert(list,init->ref->data);
-    list = list_insert(list,init->ref->data);
-    degreeCalc((s_cell*)init->ref->next,list);
+    cell->degree = cell->degreeC;
 
 }
 
-void topologicalSort(feuille_t * feuille,s_cell* cell)
+
+
+
+
+void Sort(s_cell* cell)
 {
-    node_t * order_ref = list_create();
-    /*s_cell * tmp_cell = cell;
-    if(order_ref == NULL)
-        return;
-    while(cell->ref != NULL)
+    evaluate(cell);
+    if(cell->succ != NULL)
     {
+        node_t *n = cell->succ;
+        node_t * n2 = n;
+        s_cell *c = NULL;
 
-    }*/
-  order_ref = degreeCalc(cell,order_ref);
+        while(n != NULL)
+        {
+            c = list_get_data(n);
+            c->degree--;
+            if(c->degree <=0)
+            {
+                printf("test : evalute %s\n ",c->nom);
+                evaluate(c);
+                n2 = c->succ->next;
+            }
+            if(n->next == NULL && c->succ != NULL)
+                n = n2;
+            else
+                n = n->next;
+        }
 
+    }
 
 
 }
-
+void printCell(s_cell *c)
+{
+    if(c->val == 0.0)
+        printf("Value of %s is %s\n",c->nom,c->contenu);
+    else
+        printf("Value of %s is %lf\n",c->nom,c->val);
+}
 
 void * getCellRef(node_t * n, const char* ref)
 {
     node_t * tmp = n;
     while(tmp)
     {
-        printf("%s\n",((s_cell*)n->data)->nom);
-        if(strcmp(((s_cell*)n->data)->nom ,ref) == 0)
+        printf("%s\n",((s_cell*)tmp->data)->nom);
+        if(strcmp(((s_cell*)tmp->data)->nom ,ref) == 0)
             return tmp->data;
         tmp = tmp->next;
     }
     return NULL;
 }
+
+
+int list_exists(node_t *head, void *data) {
+
+    if (head == NULL) return 0;
+
+    node_t *n = head;
+
+    while (n != NULL) {
+        if (n->data == data) return 1;
+        n = n->next;
+    }
+
+    return 0;
+
+}
+
+
